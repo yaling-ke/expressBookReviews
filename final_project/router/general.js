@@ -3,6 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const axios = require('axios');
 
 // Check if a user with the given username already exists
 const doesExist = (username) => {
@@ -76,4 +77,75 @@ public_users.get('/review/:isbn',function (req, res) {
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 
+const getAllBooks = async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/');
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching books:", error.message);
+        throw error;
+    }
+};
+
+const getBookByISBN = async (isbn) => {
+    try {
+        const response = await axios.get(
+            `http://localhost:5000/isbn/${isbn}`
+        );
+
+        console.log("Book details:", response.data);
+        return response.data;
+
+    } catch (error) {
+        console.error(
+            "Error fetching book by ISBN:",
+            error.message
+        );
+        throw error;
+    }
+};
+
+const getBooksByAuthor = async (author) => {
+    try {
+        const response = await axios.get(
+            `http://localhost:5000/author/${encodeURIComponent(author)}`
+        );
+
+        console.log("Books by author:", response.data);
+        return response.data;
+
+    } catch (error) {
+        console.error(
+            "Error fetching books by author:",
+            error.message
+        );
+        throw error;
+    }
+};
+
+const getBooksByTitle = async (title) => {
+    try {
+        const response = await axios.get(
+            `http://localhost:5000/title/${encodeURIComponent(title)}`
+        );
+
+        console.log("Books by title:", response.data);
+        return response.data;
+
+    } catch (error) {
+        console.error(
+            "Error fetching books by title:",
+            error.message
+        );
+        throw error;
+    }
+};
+
+
+module.exports.getAllBooks = getAllBooks;
+module.exports.getBookByISBN = getBookByISBN;
+module.exports.getBooksByAuthor = getBooksByAuthor;
+module.exports.getBooksByTitle = getBooksByTitle;
 module.exports.general = public_users;
+
